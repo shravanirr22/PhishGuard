@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model Performance — PhishGuard</title>
+  <meta name="description" content="View PhishGuard's machine learning model performance metrics including accuracy, precision, recall, F1 score, and confusion matrix." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+</head>
+<body>
+
+  <nav class="navbar" id="main-navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-text">Phish<span class="brand-accent">Guard</span></span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/" class="nav-link">Dashboard</a></li>
+        <li><a href="/scanner" class="nav-link">Scanner</a></li>
+        <li><a href="/performance" class="nav-link active">Model Performance</a></li>
+        <li><a href="/history" class="nav-link">Scan History</a></li>
+        <li><a href="/about" class="nav-link">About</a></li>
+        <li><a href="/scanner" class="btn btn-primary nav-cta">Scan URL</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <section class="page-header">
+      <div class="container">
+        <h1 class="page-title"><span class="text-gradient">Model Performance</span></h1>
+        <p class="page-sub">Real evaluation metrics from training — no fabricated statistics</p>
+      </div>
+    </section>
+
+    <!-- No model state -->
+    <div id="no-model-banner" class="container" style="display:none; margin-top:2rem;">
+      <div class="glass-card warning-card">
+        <div class="warn-icon">⚠️</div>
+        <div>
+          <h3>Model Not Trained Yet</h3>
+          <p>No trained model was found. To enable full metrics, please train the model:</p>
+          <code class="code-block">python train_model.py --dataset data/phishing_dataset.csv --target Result</code>
+          <p style="margin-top:1rem;">See the <a href="/about" class="text-accent">About page</a> for dataset setup instructions.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics content -->
+    <div id="metrics-content" style="display:none;">
+
+      <!-- Summary cards -->
+      <section class="section">
+        <div class="container">
+          <h2 class="section-title">Best Model Summary</h2>
+          <div class="metrics-info-bar glass-card" id="metrics-info-bar">
+            <div class="info-item">
+              <span class="info-label">Selected Model</span>
+              <span class="info-value" id="info-model">—</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Dataset</span>
+              <span class="info-value" id="info-dataset">—</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Training Samples</span>
+              <span class="info-value" id="info-train">—</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Test Samples</span>
+              <span class="info-value" id="info-test">—</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Trained On</span>
+              <span class="info-value" id="info-date">—</span>
+            </div>
+          </div>
+          <div class="metric-cards-grid">
+            <div class="metric-card glass-card" id="mc-accuracy">
+              <div class="metric-label">Accuracy</div>
+              <div class="metric-value" id="m-accuracy">—</div>
+              <div class="metric-bar-wrap"><div class="metric-bar" id="mb-accuracy"></div></div>
+              <div class="metric-desc">Overall correct predictions</div>
+            </div>
+            <div class="metric-card glass-card" id="mc-precision">
+              <div class="metric-label">Precision</div>
+              <div class="metric-value" id="m-precision">—</div>
+              <div class="metric-bar-wrap"><div class="metric-bar" id="mb-precision"></div></div>
+              <div class="metric-desc">Of predicted phishing, how many were correct</div>
+            </div>
+            <div class="metric-card glass-card" id="mc-recall">
+              <div class="metric-label">Recall</div>
+              <div class="metric-value" id="m-recall">—</div>
+              <div class="metric-bar-wrap"><div class="metric-bar" id="mb-recall"></div></div>
+              <div class="metric-desc">Of actual phishing, how many were detected</div>
+            </div>
+            <div class="metric-card glass-card" id="mc-f1">
+              <div class="metric-label">F1 Score</div>
+              <div class="metric-value" id="m-f1">—</div>
+              <div class="metric-bar-wrap"><div class="metric-bar" id="mb-f1"></div></div>
+              <div class="metric-desc">Harmonic mean of precision and recall</div>
+            </div>
+            <div class="metric-card glass-card" id="mc-roc">
+              <div class="metric-label">ROC-AUC</div>
+              <div class="metric-value" id="m-roc">—</div>
+              <div class="metric-bar-wrap"><div class="metric-bar" id="mb-roc"></div></div>
+              <div class="metric-desc">Area under ROC curve</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts -->
+      <section class="section">
+        <div class="container charts-grid">
+
+          <div class="glass-card chart-card">
+            <h3>Model Comparison</h3>
+            <p class="card-sub">Accuracy, Precision, Recall & F1 across all trained models</p>
+            <div class="chart-container">
+              <canvas id="model-comparison-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="glass-card chart-card">
+            <h3>Confusion Matrix</h3>
+            <p class="card-sub">Predicted vs Actual labels on the test set</p>
+            <div class="chart-container chart-square">
+              <canvas id="confusion-matrix-chart"></canvas>
+            </div>
+            <div class="cm-legend" id="cm-legend"></div>
+          </div>
+
+        </div>
+
+        <!-- ROC chart full width -->
+        <div class="container" style="margin-top:2rem;">
+          <div class="glass-card chart-card">
+            <h3>All Models — Metric Radar</h3>
+            <p class="card-sub">Multi-metric view per model</p>
+            <div class="chart-container" style="max-height:380px;">
+              <canvas id="radar-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feature names -->
+      <section class="section">
+        <div class="container">
+          <div class="glass-card">
+            <h3>Features Used in Training</h3>
+            <div class="feature-tags" id="feature-tags"></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-text">Phish<span class="brand-accent">Guard</span></span>
+        <p>All metrics displayed are from real model evaluation — never fabricated.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/scanner">URL Scanner</a></li>
+            <li><a href="/performance">Model Performance</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 PhishGuard — Educational Phishing Detection System</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="/static/js/main.js"></script>
+  <script src="/static/js/performance.js"></script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — PhishGuard</title>
+  <meta name="description" content="Learn about the PhishGuard phishing detection system: methodology, architecture, features used, and limitations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+</head>
+<body>
+
+  <nav class="navbar" id="main-navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-text">Phish<span class="brand-accent">Guard</span></span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/" class="nav-link">Dashboard</a></li>
+        <li><a href="/scanner" class="nav-link">Scanner</a></li>
+        <li><a href="/performance" class="nav-link">Model Performance</a></li>
+        <li><a href="/history" class="nav-link">Scan History</a></li>
+        <li><a href="/about" class="nav-link active">About</a></li>
+        <li><a href="/scanner" class="btn btn-primary nav-cta">Scan URL</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <section class="page-header">
+      <div class="container">
+        <h1 class="page-title"><span class="text-gradient">About PhishGuard</span></h1>
+        <p class="page-sub">A full-stack machine learning system for phishing website detection</p>
+      </div>
+    </section>
+
+    <section class="section about-section">
+      <div class="container about-layout">
+
+        <!-- Problem Statement -->
+        <div class="glass-card about-card">
+          <div class="about-icon">🎯</div>
+          <h2>Problem Statement</h2>
+          <p>
+            Phishing attacks remain one of the most prevalent and damaging cyber threats worldwide.
+            Cybercriminals create fraudulent websites that closely mimic legitimate ones to steal
+            credentials, financial data, and personal information from unsuspecting users.
+          </p>
+          <p>
+            Traditional blacklist approaches are reactive and cannot detect newly created phishing
+            sites. Machine learning offers a proactive approach by learning structural patterns
+            in URLs that differentiate phishing sites from legitimate ones.
+          </p>
+        </div>
+
+        <!-- Objectives -->
+        <div class="glass-card about-card">
+          <div class="about-icon">🏆</div>
+          <h2>Project Objectives</h2>
+          <ul class="about-list">
+            <li>Build a real ML pipeline that trains on labelled URL datasets</li>
+            <li>Extract 22 structural URL features without visiting the website</li>
+            <li>Train and compare Logistic Regression, Decision Tree, and Random Forest classifiers</li>
+            <li>Provide a full-stack web interface with scanning, history, and metrics</li>
+            <li>Display only real, computed evaluation metrics — no fabricated scores</li>
+            <li>Maintain a persistent scan history with sensitive parameter redaction</li>
+          </ul>
+        </div>
+
+        <!-- ML Methodology -->
+        <div class="glass-card about-card">
+          <div class="about-icon">🧠</div>
+          <h2>Machine Learning Methodology</h2>
+          <h3>Dataset</h3>
+          <p>
+            The system supports two dataset formats: (1) pre-extracted numeric feature CSVs with
+            a binary label, and (2) raw URL CSVs from which features are extracted automatically.
+            A recommended dataset is the UCI / Kaggle Phishing Website Features dataset.
+          </p>
+          <h3>Feature Engineering</h3>
+          <p>
+            22 features are extracted from each URL using pure string and URL parsing — no HTTP
+            requests are made. Features capture URL length, domain characteristics, keyword
+            presence, entropy, and structural anomalies.
+          </p>
+          <h3>Preprocessing</h3>
+          <p>
+            A scikit-learn Pipeline handles median imputation for missing values and
+            StandardScaler normalization. The pipeline is fit only on training data to
+            prevent data leakage.
+          </p>
+          <h3>Model Selection</h3>
+          <p>
+            Three models are trained: Logistic Regression (baseline, interpretable),
+            Decision Tree (rule-based, fast), and Random Forest (ensemble, highest accuracy).
+            The best model is selected by F1-score with a secondary priority on recall
+            to minimize missed phishing detections.
+          </p>
+          <h3>Class Imbalance</h3>
+          <p>
+            All models use <code>class_weight="balanced"</code> to handle common imbalance between
+            phishing and legitimate samples.
+          </p>
+        </div>
+
+        <!-- System Architecture -->
+        <div class="glass-card about-card">
+          <div class="about-icon">🏗️</div>
+          <h2>System Architecture</h2>
+          <div class="arch-diagram">
+            <div class="arch-layer">
+              <div class="arch-box frontend">Frontend (HTML/CSS/JS)</div>
+              <div class="arch-arrow">↕ HTTP/JSON</div>
+            </div>
+            <div class="arch-layer">
+              <div class="arch-box backend">Flask REST API (Python)</div>
+              <div class="arch-arrow">↕</div>
+            </div>
+            <div class="arch-layer arch-row">
+              <div class="arch-box ml">ML Pipeline (scikit-learn)</div>
+              <div class="arch-connector">+</div>
+              <div class="arch-box db">SQLite Database</div>
+            </div>
+          </div>
+          <h3>API Endpoints</h3>
+          <div class="endpoint-list">
+            <div class="endpoint"><span class="method get">GET</span><code>/api/health</code><span>Model readiness status</span></div>
+            <div class="endpoint"><span class="method post">POST</span><code>/api/predict</code><span>Analyze a URL</span></div>
+            <div class="endpoint"><span class="method get">GET</span><code>/api/metrics</code><span>Model evaluation results</span></div>
+            <div class="endpoint"><span class="method get">GET</span><code>/api/history</code><span>Scan history</span></div>
+            <div class="endpoint"><span class="method delete">DELETE</span><code>/api/history</code><span>Clear history</span></div>
+            <div class="endpoint"><span class="method post">POST</span><code>/api/train</code><span>Start model training</span></div>
+          </div>
+        </div>
+
+        <!-- Dataset Setup -->
+        <div class="glass-card about-card">
+          <div class="about-icon">📊</div>
+          <h2>Dataset Setup</h2>
+          <p>To train the model, place a phishing dataset in the <code>data/</code> directory.</p>
+          <h3>Recommended Datasets</h3>
+          <ul class="about-list">
+            <li><strong>UCI Phishing Websites Dataset</strong> — Pre-extracted features, ~11,000 samples<br/>
+              <a href="https://archive.ics.uci.edu/dataset/327/phishing+websites" target="_blank" rel="noopener" class="text-accent">archive.ics.uci.edu/dataset/327/phishing+websites</a>
+            </li>
+            <li><strong>Kaggle Phishing Dataset</strong> — URLs with labels, various sizes<br/>
+              <a href="https://www.kaggle.com/datasets/eswarchandt/phishing-website-detector" target="_blank" rel="noopener" class="text-accent">kaggle.com/datasets/eswarchandt/phishing-website-detector</a>
+            </li>
+            <li><strong>PhiUSIIL Phishing URL Dataset</strong> — 235,000+ URLs<br/>
+              <a href="https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset" target="_blank" rel="noopener" class="text-accent">archive.ics.uci.edu/dataset/967</a>
+            </li>
+          </ul>
+          <h3>Training Commands</h3>
+          <pre class="code-block"># Pre-extracted features dataset
+python train_model.py --dataset data/phishing_dataset.csv --target Result
+
+# Raw URL dataset
+python train_model.py --dataset data/phishing_urls.csv --target label --url-column url</pre>
+        </div>
+
+        <!-- Features -->
+        <div class="glass-card about-card">
+          <div class="about-icon">🔬</div>
+          <h2>Features Used for Classification</h2>
+          <div class="feature-table-wrap">
+            <table class="feature-table">
+              <thead><tr><th>Feature</th><th>Type</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td>url_length</td><td>Numeric</td><td>Total URL character count</td></tr>
+                <tr><td>domain_length</td><td>Numeric</td><td>Length of the registered domain</td></tr>
+                <tr><td>dot_count</td><td>Numeric</td><td>Number of dots in the full URL</td></tr>
+                <tr><td>hyphen_count</td><td>Numeric</td><td>Hyphens in hostname</td></tr>
+                <tr><td>subdirectory_count</td><td>Numeric</td><td>Number of path segments</td></tr>
+                <tr><td>param_count</td><td>Numeric</td><td>Number of query parameters</td></tr>
+                <tr><td>subdomain_count</td><td>Numeric</td><td>Number of subdomains</td></tr>
+                <tr><td>has_https</td><td>Binary</td><td>1 if scheme is HTTPS</td></tr>
+                <tr><td>is_ip_address</td><td>Binary</td><td>1 if hostname is an IP address</td></tr>
+                <tr><td>has_suspicious_word</td><td>Binary</td><td>1 if any suspicious keyword present</td></tr>
+                <tr><td>suspicious_word_count</td><td>Numeric</td><td>Count of suspicious keywords</td></tr>
+                <tr><td>at_symbol</td><td>Binary</td><td>1 if @ present in URL</td></tr>
+                <tr><td>double_slash_redirect</td><td>Binary</td><td>1 if // in path (redirect)</td></tr>
+                <tr><td>digit_count</td><td>Numeric</td><td>Number of digits in URL</td></tr>
+                <tr><td>special_char_count</td><td>Numeric</td><td>Count of special characters</td></tr>
+                <tr><td>is_shortened</td><td>Binary</td><td>1 if known URL shortener used</td></tr>
+                <tr><td>url_entropy</td><td>Float</td><td>Shannon entropy of full URL</td></tr>
+                <tr><td>domain_entropy</td><td>Float</td><td>Shannon entropy of domain</td></tr>
+                <tr><td>prefix_suffix</td><td>Binary</td><td>1 if hyphen in domain name</td></tr>
+                <tr><td>has_non_standard_port</td><td>Binary</td><td>1 if port is not 80 or 443</td></tr>
+                <tr><td>has_fragment</td><td>Binary</td><td>1 if URL has a # fragment</td></tr>
+                <tr><td>longest_path_segment</td><td>Numeric</td><td>Length of longest path segment</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Limitations -->
+        <div class="glass-card about-card">
+          <div class="about-icon">⚠️</div>
+          <h2>Limitations & Future Scope</h2>
+          <h3>Current Limitations</h3>
+          <ul class="about-list warning-list">
+            <li>URL-only analysis cannot detect phishing sites with clean, legitimate-looking URLs</li>
+            <li>The model cannot analyze page content, HTML structure, or visual similarity</li>
+            <li>Newly registered domains are not flagged if they have no suspicious URL features</li>
+            <li>Results are probabilistic predictions, not security guarantees</li>
+            <li>Model performance depends entirely on the quality and size of the training dataset</li>
+          </ul>
+          <h3>Future Enhancements</h3>
+          <ul class="about-list">
+            <li>Domain age and registration date analysis via WHOIS</li>
+            <li>Page content and HTML structure analysis</li>
+            <li>Certificate transparency log checks</li>
+            <li>Visual similarity detection (screenshot comparison)</li>
+            <li>Real-time blacklist integration (Google Safe Browsing API)</li>
+            <li>Deep learning models (LSTM, BERT) for URL sequence analysis</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-text">Phish<span class="brand-accent">Guard</span></span>
+        <p>Built for educational and research purposes in cybersecurity and machine learning.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/scanner">URL Scanner</a></li>
+            <li><a href="/performance">Model Performance</a></li>
+            <li><a href="/about">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 PhishGuard — Educational Phishing Detection System</p>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishGuard — AI-Powered Phishing Detection</title>
+  <meta name="description" content="PhishGuard uses machine learning to analyze URLs and detect phishing websites in real time. Protect yourself with AI-powered cybersecurity analysis." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar" id="main-navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-text">Phish<span class="brand-accent">Guard</span></span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/" class="nav-link" data-page="home">Dashboard</a></li>
+        <li><a href="/scanner" class="nav-link" data-page="scanner">Scanner</a></li>
+        <li><a href="/performance" class="nav-link" data-page="performance">Model Performance</a></li>
+        <li><a href="/history" class="nav-link" data-page="history">Scan History</a></li>
+        <li><a href="/about" class="nav-link" data-page="about">About</a></li>
+        <li><a href="/scanner" class="btn btn-primary nav-cta">Scan URL</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- PAGE CONTENT -->
+  <main class="main-content">
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="hero">
+      <div class="hero-bg-effects">
+        <div class="hero-orb orb-1"></div>
+        <div class="hero-orb orb-2"></div>
+        <div class="hero-orb orb-3"></div>
+        <div class="grid-overlay"></div>
+      </div>
+      <div class="container hero-content">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span>AI-Powered Cybersecurity</span>
+        </div>
+        <h1 class="hero-title">
+          Detect <span class="text-gradient">Phishing Websites</span><br />
+          Before They Attack
+        </h1>
+        <p class="hero-subtitle">
+          PhishGuard uses advanced machine learning to analyze URLs in real time,
+          identifying phishing threats with high precision — protecting you from
+          credential theft, malware, and fraud.
+        </p>
+        <div class="hero-cta-group">
+          <a href="/scanner" class="btn btn-primary btn-lg" id="hero-scan-btn">
+            <span>🔍</span> Scan a URL Now
+          </a>
+          <a href="/performance" class="btn btn-outline btn-lg">
+            <span>📊</span> View Model Results
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat" id="hs-accuracy">
+            <div class="stat-value" id="stat-accuracy">—</div>
+            <div class="stat-label">Model Accuracy</div>
+          </div>
+          <div class="hero-stat" id="hs-f1">
+            <div class="stat-value" id="stat-f1">—</div>
+            <div class="stat-label">F1 Score</div>
+          </div>
+          <div class="hero-stat" id="hs-samples">
+            <div class="stat-value" id="stat-samples">—</div>
+            <div class="stat-label">Training Samples</div>
+          </div>
+          <div class="hero-stat" id="hs-scans">
+            <div class="stat-value" id="stat-scans">—</div>
+            <div class="stat-label">URLs Scanned</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== QUICK SCAN ===== -->
+    <section class="section quick-scan-section" id="quick-scan">
+      <div class="container">
+        <div class="quick-scan-card glass-card">
+          <h2 class="section-title text-center">Quick URL Scan</h2>
+          <p class="section-sub text-center">Enter any URL to instantly check if it's a phishing site</p>
+          <div class="scan-form" id="home-scan-form">
+            <div class="input-group">
+              <span class="input-icon">🔗</span>
+              <input
+                type="text"
+                id="home-url-input"
+                class="url-input"
+                placeholder="https://example.com or paste any suspicious URL…"
+                autocomplete="off"
+                spellcheck="false"
+                maxlength="2048"
+              />
+              <button class="btn btn-primary" id="home-scan-btn" type="button">
+                Analyze
+              </button>
+            </div>
+            <div class="example-urls">
+              <span class="example-label">Try examples:</span>
+              <button class="example-chip" onclick="fillExample('https://google.com')">google.com</button>
+              <button class="example-chip" onclick="fillExample('http://192.168.1.1/login/verify?user=admin&token=abc123')">IP login URL</button>
+              <button class="example-chip" onclick="fillExample('http://paypa1-secure-login.xyz/update/account/verify')">Suspicious URL</button>
+            </div>
+          </div>
+          <div id="home-result" class="home-result" style="display:none;"></div>
+          <div id="home-loading" class="scan-loading" style="display:none;">
+            <div class="spinner"></div>
+            <span>Analyzing URL features…</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section class="section how-section" id="how-it-works">
+      <div class="container">
+        <h2 class="section-title text-center">How It Works</h2>
+        <p class="section-sub text-center">
+          PhishGuard analyzes structural URL properties — no page visits, no HTTP requests
+        </p>
+        <div class="steps-grid">
+          <div class="step-card glass-card">
+            <div class="step-num">01</div>
+            <div class="step-icon">🔗</div>
+            <h3>Submit URL</h3>
+            <p>Enter any URL. PhishGuard never visits or opens the website — all analysis is done safely on the backend.</p>
+          </div>
+          <div class="step-card glass-card">
+            <div class="step-num">02</div>
+            <div class="step-icon">🔬</div>
+            <h3>Feature Extraction</h3>
+            <p>22 URL features are extracted including length, HTTPS status, IP presence, suspicious keywords, domain entropy, and more.</p>
+          </div>
+          <div class="step-card glass-card">
+            <div class="step-num">03</div>
+            <div class="step-icon">🧠</div>
+            <h3>ML Prediction</h3>
+            <p>Features are fed to a trained Random Forest / Logistic Regression model which outputs a phishing probability score.</p>
+          </div>
+          <div class="step-card glass-card">
+            <div class="step-num">04</div>
+            <div class="step-icon">📋</div>
+            <h3>Detailed Report</h3>
+            <p>You receive the classification result, confidence score, a breakdown of suspicious features, and security recommendations.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FEATURES ===== -->
+    <section class="section features-section" id="features">
+      <div class="container">
+        <h2 class="section-title text-center">22 URL Features Analyzed</h2>
+        <p class="section-sub text-center">Every URL is broken down into structured attributes for precise classification</p>
+        <div class="features-grid">
+          <div class="feature-item"><span class="feat-icon">📏</span><span>URL Length</span></div>
+          <div class="feature-item"><span class="feat-icon">🌐</span><span>Domain Length</span></div>
+          <div class="feature-item"><span class="feat-icon">🔒</span><span>HTTPS Usage</span></div>
+          <div class="feature-item"><span class="feat-icon">📍</span><span>IP in Hostname</span></div>
+          <div class="feature-item"><span class="feat-icon">⚠️</span><span>Suspicious Keywords</span></div>
+          <div class="feature-item"><span class="feat-icon">🔗</span><span>Subdomain Count</span></div>
+          <div class="feature-item"><span class="feat-icon">📂</span><span>Subdirectories</span></div>
+          <div class="feature-item"><span class="feat-icon">❓</span><span>Query Parameters</span></div>
+          <div class="feature-item"><span class="feat-icon">➖</span><span>Hyphen Count</span></div>
+          <div class="feature-item"><span class="feat-icon">@</span><span>@ Symbol</span></div>
+          <div class="feature-item"><span class="feat-icon">🔢</span><span>Digit Count</span></div>
+          <div class="feature-item"><span class="feat-icon">#️⃣</span><span>Special Chars</span></div>
+          <div class="feature-item"><span class="feat-icon">✂️</span><span>URL Shortener</span></div>
+          <div class="feature-item"><span class="feat-icon">🔀</span><span>URL Entropy</span></div>
+          <div class="feature-item"><span class="feat-icon">🔀</span><span>Domain Entropy</span></div>
+          <div class="feature-item"><span class="feat-icon">↪️</span><span>Double Slash Redirect</span></div>
+          <div class="feature-item"><span class="feat-icon">🚪</span><span>Non-Standard Port</span></div>
+          <div class="feature-item"><span class="feat-icon">#</span><span>Fragment (#)</span></div>
+          <div class="feature-item"><span class="feat-icon">〰️</span><span>Prefix/Suffix Hyphen</span></div>
+          <div class="feature-item"><span class="feat-icon">🔢</span><span>Dot Count</span></div>
+          <div class="feature-item"><span class="feat-icon">📦</span><span>Longest Path Segment</span></div>
+          <div class="feature-item"><span class="feat-icon">🔤</span><span>Suspicious Word Count</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECURITY TIPS ===== -->
+    <section class="section tips-section" id="security-tips">
+      <div class="container">
+        <h2 class="section-title text-center">Security Tips</h2>
+        <p class="section-sub text-center">Best practices to protect yourself from phishing attacks</p>
+        <div class="tips-grid">
+          <div class="tip-card glass-card">
+            <div class="tip-icon">🔍</div>
+            <h3>Verify the URL</h3>
+            <p>Always check the URL carefully. Look for misspellings of trusted domains (e.g., g00gle.com vs google.com).</p>
+          </div>
+          <div class="tip-card glass-card">
+            <div class="tip-icon">🔒</div>
+            <h3>Check for HTTPS</h3>
+            <p>While HTTPS alone doesn't guarantee safety, HTTP sites should raise immediate suspicion for sensitive actions.</p>
+          </div>
+          <div class="tip-card glass-card">
+            <div class="tip-icon">📧</div>
+            <h3>Beware of Email Links</h3>
+            <p>Never click links in unsolicited emails. Instead, type the URL directly into your browser.</p>
+          </div>
+          <div class="tip-card glass-card">
+            <div class="tip-icon">🚫</div>
+            <h3>Don't Enter Credentials</h3>
+            <p>Never enter passwords or personal information on a site you arrived at via a suspicious link.</p>
+          </div>
+          <div class="tip-card glass-card">
+            <div class="tip-icon">🛡️</div>
+            <h3>Use 2FA</h3>
+            <p>Enable two-factor authentication on all important accounts to mitigate the impact of credential theft.</p>
+          </div>
+          <div class="tip-card glass-card">
+            <div class="tip-icon">📱</div>
+            <h3>Report Phishing</h3>
+            <p>Report suspicious URLs to your browser vendor, Google Safe Browsing, or Microsoft SmartScreen.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== MODEL STATUS ===== -->
+    <section class="section model-status-section" id="model-status">
+      <div class="container">
+        <div class="model-status-card glass-card" id="model-status-card">
+          <div class="status-icon" id="status-icon">⏳</div>
+          <div class="status-text">
+            <h3 id="status-title">Checking model status…</h3>
+            <p id="status-desc">Connecting to PhishGuard backend</p>
+          </div>
+          <a href="/performance" class="btn btn-outline" id="status-btn" style="display:none;">View Details</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-text">Phish<span class="brand-accent">Guard</span></span>
+        <p>AI-powered phishing detection using machine learning. Built for educational and research purposes.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/scanner">URL Scanner</a></li>
+            <li><a href="/performance">Model Performance</a></li>
+            <li><a href="/history">Scan History</a></li>
+            <li><a href="/about">About</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Technology</h4>
+          <ul>
+            <li>scikit-learn</li>
+            <li>Flask REST API</li>
+            <li>Chart.js</li>
+            <li>SQLite</li>
+            <li>Python 3.11</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Disclaimer</h4>
+          <p class="footer-disclaimer">
+            PhishGuard is an ML-based tool and does not guarantee website safety.
+            Always exercise caution online.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 PhishGuard — Educational Phishing Detection System</p>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

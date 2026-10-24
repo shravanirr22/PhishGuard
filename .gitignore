@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+.env
+.venv/
+ENV/
+
+# Model artifacts (large files)
+models/*.joblib
+models/plots/
+
+# Database (contains scan history — may contain personal data)
+database/*.db
+
+# Dataset files (may be large)
+data/*.csv
+data/*.arff
+
+# pytest
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log

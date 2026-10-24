@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scan History — PhishGuard</title>
+  <meta name="description" content="View the history of URLs scanned by PhishGuard, with timestamps, prediction results, and confidence scores." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+</head>
+<body>
+
+  <nav class="navbar" id="main-navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-text">Phish<span class="brand-accent">Guard</span></span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/" class="nav-link">Dashboard</a></li>
+        <li><a href="/scanner" class="nav-link">Scanner</a></li>
+        <li><a href="/performance" class="nav-link">Model Performance</a></li>
+        <li><a href="/history" class="nav-link active">Scan History</a></li>
+        <li><a href="/about" class="nav-link">About</a></li>
+        <li><a href="/scanner" class="btn btn-primary nav-cta">Scan URL</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <section class="page-header">
+      <div class="container">
+        <h1 class="page-title"><span class="text-gradient">Scan History</span></h1>
+        <p class="page-sub">Previously scanned URLs with predictions and confidence scores</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="history-toolbar glass-card">
+          <div class="history-stats" id="history-stats">
+            <span class="hstat"><span id="total-scans">0</span> total scans</span>
+            <span class="hstat hstat-phish"><span id="phish-count">0</span> phishing</span>
+            <span class="hstat hstat-legit"><span id="legit-count">0</span> legitimate</span>
+          </div>
+          <div class="history-actions">
+            <input type="text" id="history-search" class="search-input" placeholder="Filter by URL…" />
+            <button class="btn btn-outline" id="refresh-btn">🔄 Refresh</button>
+            <button class="btn btn-danger" id="clear-btn">🗑️ Clear History</button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="glass-card table-card" id="history-table-wrap">
+          <div id="history-loading" class="table-loading">
+            <div class="spinner"></div><span>Loading history…</span>
+          </div>
+          <div id="history-empty" class="table-empty" style="display:none;">
+            <div class="empty-icon">📭</div>
+            <h3>No scan history yet</h3>
+            <p>Scanned URLs will appear here.</p>
+            <a href="/scanner" class="btn btn-primary">Scan a URL</a>
+          </div>
+          <div id="table-container" style="display:none;">
+            <table class="history-table" id="history-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>URL</th>
+                  <th>Prediction</th>
+                  <th>Confidence</th>
+                  <th>Scanned At</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirm-modal" style="display:none;">
+    <div class="modal-box glass-card">
+      <div class="modal-icon">⚠️</div>
+      <h3>Clear All History?</h3>
+      <p>This will permanently delete all <strong id="modal-count">0</strong> scan records. This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="modal-cancel">Cancel</button>
+        <button class="btn btn-danger" id="modal-confirm">Clear History</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-text">Phish<span class="brand-accent">Guard</span></span>
+        <p>Sensitive query parameters are redacted from stored URLs.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/scanner">URL Scanner</a></li>
+            <li><a href="/history">Scan History</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 PhishGuard — Educational Phishing Detection System</p>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+  <script src="/static/js/history.js"></script>
+</body>
+</html>

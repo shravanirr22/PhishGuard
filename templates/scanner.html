@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Scanner — PhishGuard</title>
+  <meta name="description" content="Scan any URL for phishing indicators using PhishGuard's AI-powered analysis engine." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+</head>
+<body>
+
+  <nav class="navbar" id="main-navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-text">Phish<span class="brand-accent">Guard</span></span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/" class="nav-link">Dashboard</a></li>
+        <li><a href="/scanner" class="nav-link active">Scanner</a></li>
+        <li><a href="/performance" class="nav-link">Model Performance</a></li>
+        <li><a href="/history" class="nav-link">Scan History</a></li>
+        <li><a href="/about" class="nav-link">About</a></li>
+        <li><a href="/scanner" class="btn btn-primary nav-cta">Scan URL</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <section class="page-header">
+      <div class="container">
+        <h1 class="page-title"><span class="text-gradient">URL Scanner</span></h1>
+        <p class="page-sub">Enter any URL to analyze its phishing risk using machine learning</p>
+      </div>
+    </section>
+
+    <section class="section scanner-section">
+      <div class="container scanner-layout">
+
+        <!-- SCAN PANEL -->
+        <div class="scanner-panel">
+          <div class="glass-card scanner-card">
+            <h2>Analyze Website</h2>
+            <p class="card-sub">URLs are analyzed locally — we never visit or open the website.</p>
+
+            <div class="scan-form">
+              <div class="input-group">
+                <span class="input-icon">🔗</span>
+                <input
+                  type="text"
+                  id="scanner-url-input"
+                  class="url-input"
+                  placeholder="https://example.com"
+                  autocomplete="off"
+                  spellcheck="false"
+                  maxlength="2048"
+                  autofocus
+                />
+              </div>
+              <div id="url-error" class="url-error" style="display:none;"></div>
+              <button class="btn btn-primary btn-full btn-lg" id="scanner-btn" type="button">
+                <span id="btn-icon">🔍</span>
+                <span id="btn-text">Analyze Website</span>
+              </button>
+            </div>
+
+            <div class="example-urls">
+              <span class="example-label">Try examples:</span>
+              <button class="example-chip" onclick="setUrl('https://www.google.com')">google.com ✅</button>
+              <button class="example-chip" onclick="setUrl('https://github.com/login')">github.com ✅</button>
+              <button class="example-chip" onclick="setUrl('http://paypa1-secure-verify.xyz/account/login?token=abc')">Fake PayPal ⚠️</button>
+              <button class="example-chip" onclick="setUrl('http://192.168.0.1/bank/login/verify')">IP Login ⚠️</button>
+              <button class="example-chip" onclick="setUrl('http://bit.ly/3xPhish123')">Shortened URL ⚠️</button>
+            </div>
+          </div>
+
+          <!-- INFO CARD -->
+          <div class="glass-card info-card">
+            <h3>What We Analyze</h3>
+            <ul class="analysis-list">
+              <li><span class="check-icon">🔒</span> HTTPS / HTTP protocol</li>
+              <li><span class="check-icon">📍</span> IP address in hostname</li>
+              <li><span class="check-icon">⚠️</span> Suspicious keywords</li>
+              <li><span class="check-icon">🌐</span> Domain structure & subdomains</li>
+              <li><span class="check-icon">📏</span> URL length and entropy</li>
+              <li><span class="check-icon">✂️</span> URL shortener services</li>
+              <li><span class="check-icon">@</span> @ symbol misuse</li>
+              <li><span class="check-icon">🚪</span> Non-standard ports</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- RESULT PANEL -->
+        <div class="result-panel" id="result-panel">
+
+          <!-- Loading state -->
+          <div class="glass-card loading-card" id="loading-card" style="display:none;">
+            <div class="scanner-animation">
+              <div class="scan-ring ring-1"></div>
+              <div class="scan-ring ring-2"></div>
+              <div class="scan-ring ring-3"></div>
+              <div class="scan-center">🔍</div>
+            </div>
+            <h3>Analyzing URL…</h3>
+            <p>Extracting features and running ML model</p>
+          </div>
+
+          <!-- Placeholder state -->
+          <div class="glass-card placeholder-card" id="placeholder-card">
+            <div class="placeholder-icon">🛡️</div>
+            <h3>Ready to Scan</h3>
+            <p>Enter a URL on the left and click <strong>Analyze Website</strong> to get your report.</p>
+          </div>
+
+          <!-- Result state -->
+          <div id="result-card" style="display:none;">
+            <!-- Result is injected by JS -->
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-text">Phish<span class="brand-accent">Guard</span></span>
+        <p>AI-powered phishing detection using machine learning.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/scanner">URL Scanner</a></li>
+            <li><a href="/performance">Model Performance</a></li>
+            <li><a href="/history">Scan History</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Disclaimer</h4>
+          <p class="footer-disclaimer">ML prediction only — not a security guarantee.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 PhishGuard — Educational Phishing Detection System</p>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+  <script src="/static/js/scanner.js"></script>
+</body>
+</html>
