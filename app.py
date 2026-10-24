@@ -36,10 +36,15 @@ BASE_DIR = Path(__file__).parent
 MODEL_DIR = BASE_DIR / "models"
 MODEL_PATH = MODEL_DIR / "phishguard_model.joblib"
 METADATA_PATH = MODEL_DIR / "model_metadata.json"
-DB_DIR = BASE_DIR / "database"
-DB_PATH = DB_DIR / "phishguard.db"
 
-DB_DIR.mkdir(parents=True, exist_ok=True)
+# On Vercel, serverless environment filesystem is read-only except /tmp
+if os.environ.get("VERCEL"):
+    DB_DIR = Path("/tmp")
+    DB_PATH = DB_DIR / "phishguard.db"
+else:
+    DB_DIR = BASE_DIR / "database"
+    DB_PATH = DB_DIR / "phishguard.db"
+    DB_DIR.mkdir(parents=True, exist_ok=True)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -473,9 +478,11 @@ def api_train():
 # ---------------------------------------------------------------------------
 # Startup
 # ---------------------------------------------------------------------------
+# Initialize DB and model on module import (critical for Vercel & serverless WSGI)
+init_db()
+load_model()
+
 if __name__ == "__main__":
-    init_db()
-    load_model()
     port = int(os.environ.get("PORT", 5000))
     logger.info("Starting PhishGuard on http://localhost:%d", port)
     app.run(debug=True, host="0.0.0.0", port=port, use_reloader=False)
